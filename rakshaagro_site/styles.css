@@ -1,0 +1,57 @@
+:root {
+  --shield: #14452F;
+  --shield-deep: #0B291B;
+  --slatex: #1E293B;
+  --amberx: #D97706;
+  --paper: #F6F4EF;
+  --cream: #FFFDF8;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  background-color: var(--paper);
+  color: var(--slatex);
+}
+
+.card {
+  background: #ffffff;
+  border: 1px solid rgba(30, 41, 59, 0.14);
+  border-radius: 1rem;
+}
+
+.btn-primary {
+  background: var(--shield);
+  color: #ffffff;
+  font-weight: 700;
+  border-radius: 0.75rem;
+  transition: background-color 0.15s ease;
+}
+
+.btn-primary:hover {
+  background: var(--shield-deep);
+}
+
+.btn-outline {
+  background: var(--cream);
+  color: var(--slatex);
+  border: 1px solid rgba(30, 41, 59, 0.25);
+  font-weight: 700;
+  border-radius: 0.75rem;
+}
+
+/* Touch-friendly tap targets on mobile/tablet */
+@media (max-width: 1023px) {
+  button, select, input {
+    min-height: 40px;
+  }
+}
+
+@media print {
+  aside, header, .no-print, #mobileBottomNav {
+    display: none !important;
+  }
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+}

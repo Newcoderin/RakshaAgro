@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RakshaAgro — B2B Crop Protection Exchange</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'], serif: ['Fraunces', 'serif'], mono: ['"JetBrains Mono"', 'monospace'] },
+          colors: { shield: '#14452F', 'shield-deep': '#0B291B', slatex: '#1E293B', amberx: '#D97706', paper: '#F6F4EF', cream: '#FFFDF8' }
+        }
+      }
+    };
+  </script>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="antialiased overflow-x-hidden min-h-screen flex flex-col lg:flex-row">
+
+  <div id="sidebarBackdrop" class="hidden fixed inset-0 z-40 bg-slate-950/50 lg:hidden"></div>
+
+  <!-- Sidebar Navigation (Desktop + Mobile Drawer) -->
+  <aside id="appSidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 text-slate-200 flex flex-col justify-between -translate-x-full lg:translate-x-0 lg:static lg:shrink-0 transition-transform">
+    <div>
+      <div class="h-16 px-4 flex items-center justify-between border-b border-slate-800">
+        <button type="button" data-view="storefront" class="nav-btn flex items-center gap-2.5 text-left">
+          <img src="assets/logo.jpeg" alt="RakshaAgro" class="h-9 w-9 rounded-lg bg-white p-0.5 object-contain" />
+          <div>
+            <div class="text-sm font-extrabold text-white">Raksha<span class="text-emerald-400">Agro</span></div>
+            <div class="text-[10px] font-mono text-amber-400">ASLI SURAKSHA • B2B</div>
+          </div>
+        </button>
+        <button id="closeSidebarBtn" type="button" class="lg:hidden p-1.5 text-slate-400" aria-label="Close menu">✕</button>
+      </div>
+
+      <nav class="p-3 space-y-1 text-sm font-semibold">
+        <button type="button" data-view="storefront" class="nav-btn w-full text-left px-3 py-2.5 rounded-lg bg-shield text-white">Brand Storefront</button>
+        <button type="button" data-view="overview" class="nav-btn w-full text-left px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800">Overview &amp; Pulse</button>
+        <button type="button" data-view="marketplace" class="nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800">
+          <span>Wholesale Exchange</span>
+          <span id="sidebarCartBadge" class="px-1.5 py-0.5 rounded bg-amberx text-white font-mono text-[10px]">2</span>
+        </button>
+        <button type="button" data-view="qr" class="nav-btn w-full text-left px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800">Zero-Nakli QR Lab</button>
+        <button type="button" data-view="formix" class="nav-btn w-full text-left px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800">Form IX &amp; KYC Vault</button>
+      </nav>
+    </div>
+
+    <div class="p-4 border-t border-slate-800">
+      <div class="p-3 rounded-xl bg-slate-800 text-xs space-y-1.5">
+        <div class="flex justify-between font-mono text-[10px] text-emerald-400"><span>● HUB ONLINE</span><span>48h SLA</span></div>
+        <div id="sidebarHubName" class="font-bold text-white truncate">Karnal GT Road Depot</div>
+        <select id="mobileHubSelector" class="md:hidden w-full px-2 py-1 rounded bg-slate-900 border border-slate-700 text-[11px] text-slate-200">
+          <option value="Karnal GT Road Depot">Karnal Hub</option>
+          <option value="Jind Mandi Hub">Jind Hub</option>
+          <option value="Kaithal Agro Depot">Kaithal Hub</option>
+          <option value="Kurukshetra Hub">Kurukshetra Hub</option>
+          <option value="Patiala Cluster Depot">Patiala Hub</option>
+        </select>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Workspace -->
+  <div class="flex-1 flex flex-col min-w-0">
+    <header class="sticky top-0 z-30 h-16 bg-cream/95 backdrop-blur border-b border-slate-200 px-4 sm:px-6 flex items-center justify-between gap-3">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <button id="openSidebarBtn" type="button" class="lg:hidden p-2 rounded-lg border bg-white text-slatex" aria-label="Menu">☰</button>
+        <h1 id="topBarTitle" class="text-sm sm:text-base font-extrabold text-slatex truncate">RakshaAgro — B2B Crop Protection</h1>
+      </div>
+
+      <div class="flex items-center gap-2 shrink-0">
+        <select id="hubSelector" class="hidden md:block px-2.5 py-1.5 rounded-lg border bg-white text-xs font-semibold">
+          <option value="Karnal GT Road Depot">Karnal Hub</option>
+          <option value="Jind Mandi Hub">Jind Hub</option>
+          <option value="Kaithal Agro Depot">Kaithal Hub</option>
+          <option value="Kurukshetra Hub">Kurukshetra Hub</option>
+          <option value="Patiala Cluster Depot">Patiala Hub</option>
+        </select>
+        <button id="langToggleBtn" type="button" class="px-2.5 py-1.5 rounded-lg border bg-white text-xs font-mono font-bold">EN / हिं</button>
+        <button id="topOrderBtn" type="button" class="btn-primary px-3 py-1.5 text-xs flex items-center gap-1.5">
+          <span>Cart</span>
+          <span id="topCartCount" class="px-1.5 py-0.5 rounded bg-amberx font-mono text-[11px]">2</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="flex-1 p-4 sm:p-6 lg:p-8 pb-24 lg:pb-10 max-w-7xl w-full mx-auto space-y-6">
+
+      <!-- 1. STOREFRONT -->
+      <section id="view-storefront" class="app-view space-y-6">
+        <div class="card overflow-hidden grid lg:grid-cols-12">
+          <div class="lg:col-span-6 p-6 sm:p-10 flex flex-col justify-center space-y-4">
+            <span class="px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-shield text-[11px] font-mono font-bold w-fit">ASLI SURAKSHA. PAKKA VYAPAR.</span>
+            <h2 id="storefrontHeadline" class="font-serif text-3xl sm:text-4xl font-bold leading-tight">
+              Verified Crop Protection, Delivered at <span class="text-shield underline decoration-amberx decoration-4">Mandi Speed.</span>
+            </h2>
+            <p id="storefrontSubtext" class="text-sm text-slate-600 leading-relaxed">
+              Source 100% CIB&amp;RC-compliant, QR-verified insecticides, herbicides, fungicides, and bio-pesticides direct from audited formulators—with instant Form IX and 48-hour dispatch.
+            </p>
+            <div class="flex flex-wrap gap-3">
+              <button type="button" data-view="marketplace" class="nav-btn btn-primary px-5 py-3 text-sm">Open Wholesale Exchange →</button>
+              <button type="button" data-view="qr" class="nav-btn btn-outline px-5 py-3 text-sm">Verify Batch QR</button>
+            </div>
+            <div class="grid grid-cols-3 gap-3 pt-4 border-t text-xs">
+              <div><strong class="block font-mono text-lg text-shield">100%</strong>QR &amp; Form IX</div>
+              <div><strong class="block font-mono text-lg text-slatex">24–48h</strong>Hub Dispatch</div>
+              <div><strong class="block font-mono text-lg text-amberx">+5–7%</strong>Margin Lift</div>
+            </div>
+          </div>
+          <div class="lg:col-span-6 relative min-h-[240px]">
+            <img src="assets/hero.jpg" alt="Indian agricultural fields" class="w-full h-full object-cover" />
+            <div class="absolute bottom-4 left-4 right-4 bg-cream/95 rounded-xl p-3 flex items-center justify-between gap-2 border">
+              <div class="text-xs">
+                <div class="font-mono text-[10px] font-bold text-shield">PILOT CLUSTER ACTIVE</div>
+                <div class="font-bold">Karnal • Jind • Kaithal • Kurukshetra • Patiala</div>
+              </div>
+              <button type="button" data-view="overview" class="nav-btn px-3 py-1.5 rounded-lg bg-slatex text-white text-xs font-bold shrink-0">View Pulse</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+          <div class="card p-4 space-y-1"><div class="font-mono font-bold text-shield">01 / ZERO-NAKLI</div><div class="font-bold text-sm">CIB&amp;RC Audited</div><p class="text-slate-600">CIR &amp; mandatory QR payload checked pre-listing.</p></div>
+          <div class="card p-4 space-y-1"><div class="font-mono font-bold text-amberx">02 / 48-HR DISPATCH</div><div class="font-bold text-sm">Outbreak Milk-Run</div><p class="text-slate-600">Regional hubs covering a 150–200 km radius.</p></div>
+          <div class="card p-4 space-y-1"><div class="font-mono font-bold text-slatex">03 / ONE-CLICK FORM IX</div><div class="font-bold text-sm">Digital Licensing</div><p class="text-slate-600">Same-day Principal Certificate &amp; GST billing.</p></div>
+          <div class="card p-4 space-y-1"><div class="font-mono font-bold text-shield">04 / HYBRID MIX</div><div class="font-bold text-sm">Synthetics + Bio</div><p class="text-slate-600">Bundle 22–35% margin biologicals with staples.</p></div>
+        </div>
+
+        <div class="card p-5 sm:p-6 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b pb-3">
+            <h3 class="font-serif text-xl font-bold">Mandi Stakeholder Value</h3>
+            <div class="flex gap-2">
+              <button type="button" data-role="retailers" class="role-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-shield text-white">Retailers</button>
+              <button type="button" data-role="fpos" class="role-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-paper border text-slate-700">FPOs</button>
+              <button type="button" data-role="formulators" class="role-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-paper border text-slate-700">Formulators</button>
+            </div>
+          </div>
+          <div id="stakeholderCard" class="grid md:grid-cols-2 gap-4 text-xs"></div>
+        </div>
+      </section>
+
+      <!-- 2. OVERVIEW & PULSE -->
+      <section id="view-overview" class="app-view hidden space-y-6">
+        <div class="rounded-2xl bg-amber-50 border border-amber-200 p-4 flex flex-wrap items-center justify-between gap-3">
+          <div class="text-xs"><span class="px-2 py-0.5 rounded bg-amberx text-white font-mono font-bold mr-2">PEST ALERT</span><strong>Rabi Wheat &amp; Paddy:</strong> High demand for Clodinafop &amp; Azoxystrobin at <span id="alertHubText" class="font-semibold">Karnal GT Road Depot</span>.</div>
+          <button type="button" data-view="marketplace" class="nav-btn px-3.5 py-2 rounded-lg bg-slatex text-white text-xs font-bold">Stock SKUs →</button>
+        </div>
+
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+          <div class="card p-4"><div class="text-slate-500">Dealer Margin Lift</div><div class="font-mono text-2xl font-bold text-shield mt-1">+5–7%</div></div>
+          <div class="card p-4"><div class="text-slate-500">Bio-Bundle Rule</div><div class="font-mono text-2xl font-bold text-amberx mt-1">1 : 3</div></div>
+          <div class="card p-4"><div class="text-slate-500">Hub Breakeven</div><div class="font-mono text-2xl font-bold text-slatex mt-1">201 Orders</div></div>
+          <div class="card p-4"><div class="text-slate-500">UPI Cash Discount</div><div class="font-mono text-2xl font-bold text-slatex mt-1">2.0% CD</div></div>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-6">
+          <div class="card p-5"><h3 class="text-sm font-bold mb-3">Seasonal Share vs. Gross Margin (%)</h3><div class="relative h-64"><canvas id="mixChart"></canvas></div></div>
+          <div class="card p-5"><h3 class="text-sm font-bold mb-3">Dealer Profit / ₹28,000 Order (₹)</h3><div class="relative h-64"><canvas id="marginChart"></canvas></div></div>
+        </div>
+      </section>
+
+      <!-- 3. WHOLESALE EXCHANGE -->
+      <section id="view-marketplace" class="app-view hidden">
+        <div class="grid xl:grid-cols-12 gap-6 items-start">
+          <div class="xl:col-span-8 space-y-4">
+            <div id="bundleBar" class="card p-4 text-xs"></div>
+            <div class="card p-4 space-y-3">
+              <input id="catalogSearch" type="text" placeholder="Search molecule, pest, or CIR..." class="w-full px-3.5 py-2 rounded-xl border text-sm" />
+              <div class="flex flex-wrap gap-2">
+                <button type="button" data-cat="All" class="cat-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-shield text-white">All (12)</button>
+                <button type="button" data-cat="Insecticides" class="cat-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-paper border">Insecticides</button>
+                <button type="button" data-cat="Herbicides" class="cat-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-paper border">Herbicides</button>
+                <button type="button" data-cat="Fungicides" class="cat-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-paper border">Fungicides</button>
+                <button type="button" data-cat="Bio-Pesticides & PGRs" class="cat-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-paper border">Bio &amp; PGRs</button>
+              </div>
+            </div>
+            <div id="catalogGrid" class="grid sm:grid-cols-2 gap-4"></div>
+          </div>
+
+          <div class="xl:col-span-4 card xl:sticky xl:top-20 overflow-hidden">
+            <div class="p-4 bg-slate-900 text-white flex justify-between items-center">
+              <div><h3 class="text-sm font-bold">Wholesale Order Sheet</h3><p class="text-[11px] text-slate-400">Free 48h delivery at ₹15,000+</p></div>
+              <span id="drawerCartCount" class="px-2 py-0.5 rounded bg-amberx font-mono text-xs font-bold">0</span>
+            </div>
+            <div class="p-3 bg-paper border-b text-[11px]">
+              <div class="flex justify-between font-semibold mb-1"><span id="deliveryText">Add ₹15,000 for free delivery</span><span id="deliveryPct" class="font-mono text-shield">0%</span></div>
+              <div class="h-1.5 bg-slate-200 rounded-full overflow-hidden"><div id="deliveryBar" class="h-full bg-shield transition-all" style="width:0%"></div></div>
+            </div>
+            <div id="cartList" class="p-4 space-y-2 max-h-60 overflow-y-auto"></div>
+            <div class="p-4 border-t bg-paper space-y-3">
+              <div class="grid grid-cols-2 gap-2">
+                <button type="button" data-pay="upi" class="pay-btn py-2 rounded-lg text-xs font-bold bg-shield text-white">UPI (2% CD)</button>
+                <button type="button" data-pay="nbfc" class="pay-btn py-2 rounded-lg text-xs font-bold bg-white border">NBFC 21-Day</button>
+              </div>
+              <div id="cartSummary" class="space-y-1 text-xs"></div>
+              <button id="checkoutBtn" type="button" class="w-full py-2.5 rounded-xl bg-amberx text-white font-bold text-xs uppercase disabled:opacity-40">Confirm &amp; Dispatch</button>
+              <button id="copyWaBtn" type="button" class="w-full py-2 rounded-xl border border-shield text-shield font-bold text-xs disabled:opacity-40">Copy WhatsApp Order</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. QR LAB -->
+      <section id="view-qr" class="app-view hidden">
+        <div class="card p-6 sm:p-8 grid lg:grid-cols-2 gap-6 items-center">
+          <div class="space-y-4">
+            <span class="px-2.5 py-1 rounded bg-amber-100 text-amberx font-mono text-[11px] font-bold">2025–26 QR MANDATE</span>
+            <h2 class="font-serif text-2xl font-bold">Zero-Nakli Batch Inspector</h2>
+            <div class="flex gap-2">
+              <input id="qrInput" type="text" value="RA-CLR-2026-884" class="flex-1 px-3.5 py-2.5 rounded-xl border font-mono text-sm" />
+              <button id="verifyQrBtn" type="button" class="btn-primary px-5 py-2.5 text-sm">Verify</button>
+            </div>
+            <div class="flex flex-wrap gap-2 text-xs font-mono">
+              <button type="button" class="sample-qr px-2.5 py-1 rounded bg-paper border" data-code="RA-CLR-2026-884">RA-CLR-2026-884</button>
+              <button type="button" class="sample-qr px-2.5 py-1 rounded bg-paper border" data-code="RA-AZX-2026-319">RA-AZX-2026-319</button>
+              <button type="button" class="sample-qr px-2.5 py-1 rounded bg-paper border" data-code="RA-NEEM-2026-102">RA-NEEM-2026-102</button>
+              <button type="button" class="sample-qr px-2.5 py-1 rounded bg-rose-50 border border-rose-300 text-rose-700" data-code="FAKE-999">FAKE-999</button>
+            </div>
+          </div>
+          <div id="qrResultBox" class="rounded-2xl border bg-cream p-6"></div>
+        </div>
+      </section>
+
+      <!-- 5. FORM IX VAULT -->
+      <section id="view-formix" class="app-view hidden">
+        <div class="card p-6 sm:p-8 grid lg:grid-cols-12 gap-6 items-start">
+          <form id="kycForm" class="lg:col-span-5 space-y-3 no-print text-xs">
+            <h2 class="font-serif text-2xl font-bold">Instant Form IX Desk</h2>
+            <input id="kycShop" type="text" required value="Kisan Seva Kendra" placeholder="Shop Name" class="w-full px-3.5 py-2 rounded-xl border text-sm" />
+            <select id="kycDistrict" class="w-full px-3.5 py-2 rounded-xl border text-sm bg-white">
+              <option>Karnal, Haryana</option><option>Jind, Haryana</option><option>Kaithal, Haryana</option><option>Patiala, Punjab</option>
+            </select>
+            <input id="kycLicense" type="text" required value="HR/KNL/PEST/2025/0418" placeholder="Form VIII License" class="w-full px-3.5 py-2 rounded-xl border font-mono" />
+            <input id="kycGst" type="text" required value="06AABCK1234F1Z5" placeholder="GSTIN" class="w-full px-3.5 py-2 rounded-xl border font-mono" />
+            <div class="flex gap-2">
+              <button type="submit" class="btn-primary flex-1 py-2.5 uppercase">Update Certificate</button>
+              <button id="printBtn" type="button" class="btn-outline px-4 py-2.5">Print PDF</button>
+            </div>
+          </form>
+          <div id="formIXPreview" class="lg:col-span-7 rounded-2xl border-2 border-slatex/25 bg-cream p-6"></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Mobile Bottom Nav -->
+  <nav id="mobileBottomNav" class="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t grid grid-cols-5 text-[10px] font-bold text-slate-600">
+    <button type="button" data-view="storefront" class="mob-btn py-2.5 text-shield">Home</button>
+    <button type="button" data-view="overview" class="mob-btn py-2.5">Pulse</button>
+    <button type="button" data-view="marketplace" class="mob-btn py-2.5">Exchange <span id="mobCartBadge" class="px-1 rounded bg-amberx text-white font-mono">2</span></button>
+    <button type="button" data-view="qr" class="mob-btn py-2.5">QR Lab</button>
+    <button type="button" data-view="formix" class="mob-btn py-2.5">Form IX</button>
+  </nav>
+
+  <div id="toast" class="hidden fixed bottom-20 lg:bottom-6 right-4 z-50 bg-slate-900 text-white px-4 py-2.5 rounded-xl shadow-xl text-xs font-semibold"></div>
+  <div id="orderModal" class="hidden fixed inset-0 z-50 bg-slate-950/65 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6 text-center space-y-4">
+      <div class="w-10 h-10 rounded-full bg-emerald-100 text-shield mx-auto flex items-center justify-center font-bold">✓</div>
+      <h3 class="text-lg font-extrabold">Order Dispatched</h3>
+      <p class="text-xs text-slate-600">Form IX &amp; GST invoice queued for WhatsApp within 15 mins; 48h hub delivery scheduled.</p>
+      <button id="closeModalBtn" type="button" class="btn-primary w-full py-2.5 text-xs">Done</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
